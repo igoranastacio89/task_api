@@ -1,3 +1,7 @@
 runtime: java17
 entrypoint: java -jar target/task-api-0.0.1-SNAPSHOT.jar
 env: standard
+
+env_variables:
+  FIREBASE_PROJECT_ID: "hsl-spring-boot"
+  GOOGLE_APPLICATION_CREDENTIALS: "/tmp/firebase-adminsdk.json"
