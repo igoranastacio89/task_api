@@ -56,6 +56,11 @@ jobs:
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Authenticate gcloud
+        run: |
+          gcloud auth activate-service-account --key-file=/tmp/firebase-adminsdk.json
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
       - name: Configure Firebase Credentials
         run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > /tmp/firebase-adminsdk.json
 
