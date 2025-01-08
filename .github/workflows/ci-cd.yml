@@ -39,7 +39,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: src/main/resources/firebase-adminsdk.json
 
       - name: Build with Maven
-        run: mvn clean install -U
+        run: mvn clean install -DskipTests
 
       - name: Run Tests
         run: mvn clean test
