@@ -31,12 +31,12 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Configure Firebase Credentials
-        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > src/main/resources/firebase-adminsdk.json
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > /tmp/firebase-adminsdk.json
 
       - name: Set GOOGLE_APPLICATION_CREDENTIALS
         run: echo "Setting GOOGLE_APPLICATION_CREDENTIALS environment variable"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: src/main/resources/firebase-adminsdk.json
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/firebase-adminsdk.json
 
       - name: Build with Maven
         run: mvn clean install -DskipTests
@@ -60,12 +60,12 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Configure Firebase Credentials
-        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > src/main/resources/firebase-adminsdk.json
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > /tmp/firebase-adminsdk.json
 
       - name: Set GOOGLE_APPLICATION_CREDENTIALS
         run: echo "Setting GOOGLE_APPLICATION_CREDENTIALS environment variable"
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: src/main/resources/firebase-adminsdk.json
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/firebase-adminsdk.json
 
       - name: Deploy to App Engine
         run: gcloud app deploy --quiet
