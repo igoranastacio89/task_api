@@ -13,43 +13,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
 
-    - name: Cache Maven Dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-    - name: Build with Maven
-      run: mvn clean install 
+      - name: Configure Firebase Credentials
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > src/main/resources/firebase-adminsdk.json
 
-    - name: Run Tests
-      run: mvn clean test -DskipTests
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "Setting GOOGLE_APPLICATION_CREDENTIALS environment variable"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: src/main/resources/firebase-adminsdk.json
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run Tests
+        run: mvn clean test
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        version: 'latest'
-        service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Setup Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: "latest"
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-    - name: Deploy to App Engine
-      run: gcloud app deploy --quiet
+      - name: Configure Firebase Credentials
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > src/main/resources/firebase-adminsdk.json
+
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "Setting GOOGLE_APPLICATION_CREDENTIALS environment variable"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: src/main/resources/firebase-adminsdk.json
+
+      - name: Deploy to App Engine
+        run: gcloud app deploy --quiet
